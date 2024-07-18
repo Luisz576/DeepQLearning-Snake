@@ -10,7 +10,7 @@ NOTHING_REWARD = 0
 
 
 class Game:
-    def __init__(self, title="DQL-Snake", map_dimentions=(30, 30), pixel_resolution=20, clock_tick=10):
+    def __init__(self, title="DQL-Snake", map_dimentions=(30, 30), pixel_resolution=20, clock_tick=40):
         pygame.init()
         pygame.display.set_caption(title)
         self.clock_tick = clock_tick
