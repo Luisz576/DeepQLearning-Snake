@@ -5,20 +5,32 @@ import direction
 
 
 class Snake:
-    def __init__(self, game):
+    def __init__(self, game, full_power=100):
         self.game = game
         self.is_alive = True
+        self.full_power = full_power
         self.direction = direction.LEFT
-        # set body
-        self.body = [[game.map_dimentions[0], game.map_dimentions[1]],
-                     [game.map_dimentions[0], game.map_dimentions[1]-1]]
-        self.body = [[2, 2], [0, 1], [0, 2]]
+        self.body = []
+        self.last_tail_position = []
+        self.power = self.full_power
+
+        self.reset()
 
     def kill(self):
         self.is_alive = False
 
     def __eated_self(self):
         pass
+
+    def reset(self):
+        self.body = [[self.game.map_dimentions[0] / 2, self.game.map_dimentions[1] / 2],
+                     [self.game.map_dimentions[0] / 2, self.game.map_dimentions[1] / 2 - 1]]
+        self.last_tail_position = [self.game.map_dimentions[0] / 2, self.game.map_dimentions[1] / 2 - 1]
+        self.is_alive = True
+        self.refull_power()
+
+    def refull_power(self):
+        self.power = self.full_power
 
     def is_snake_body(self, position):
         for i in range(len(self.body)):
@@ -34,9 +46,11 @@ class Snake:
                 self.direction = direction.new_direction_based_on_turn_left_or_right(self.direction, False)
 
     def update(self):
-        for i in range(len(self.body) - 1):
-            self.body[i+1][0] = self.body[i][0]
-            self.body[i+1][1] = self.body[i][1]
+        last_body_index = len(self.body) - 1
+
+        self.last_tail_position = [self.body[last_body_index][0], self.body[last_body_index][1]]
+        for i in range(last_body_index):
+            self.body[last_body_index-i] = [self.body[last_body_index-i-1][0], self.body[last_body_index-i-1][1]]
 
         if self.is_alive:
             if self.direction == direction.LEFT:
@@ -61,6 +75,12 @@ class Snake:
                 self.body[0][1] = y
 
             self.__eated_self()
+
+    def eat(self):
+        self.body.append([self.last_tail_position[0], self.last_tail_position[1]])
+
+    def head_pos(self):
+        return self.body[0]
 
     def render(self):
         for i in range(len(self.body)):
